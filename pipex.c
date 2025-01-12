@@ -18,10 +18,13 @@ void	exec(char *cmd, char **env)
 
 	s_cmd = ft_split(cmd, ' ');
 	if(!s_cmd)
-	{
 		exit(-1);
-	}
 	path = get_path(s_cmd[0], env);
+	if (!path)
+	{
+		ft_free_tab(s_cmd);
+		exit(1);
+	}
 	if (execve(path, s_cmd, env) == -1)
 	{
 		perror ("pipex: command not found: ");
@@ -51,6 +54,7 @@ void	child(char **av, int *p_fd, char **env)
 	exec(av[2], env);
 }
 
+
 void	parent_process(char **av, int *p_fd, char **env)
 {
 	int		fd;
@@ -67,16 +71,26 @@ void	parent_process(char **av, int *p_fd, char **env)
 int	main(int ac, char **av, char **env)
 {
 	int		p_fd[2];
-	__pid_t	pid;
+	__pid_t	pid1;
+	__pid_t	pid2;
 
 	if (ac != 5)
 		exit_handler(1);
 	if (pipe(p_fd) == -1)
 		exit(-1);
-	pid = fork();
-	if (pid == -1)
+	pid1 = fork();
+	if (pid1 == -1)
 		exit(-1);
-	if (!pid)
+	if (!pid1)
 		child(av, p_fd, env);
-	parent_process(av, p_fd, env);
+	pid2 = fork();
+	 if (pid2 == -1)
+        exit(-1);
+	if (!pid2)
+		parent_process(av, p_fd, env);
+	close (p_fd[0]);
+	close (p_fd[1]);
+	wait(NULL);
+	wait(NULL);
+	return (0);
 }
