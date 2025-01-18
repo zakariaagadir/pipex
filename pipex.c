@@ -71,6 +71,7 @@ void	parent_process(char **av, int *p_fd, char **env)
 int	main(int ac, char **av, char **env)
 {
 	int		p_fd[2];
+	int		status;
 	__pid_t	pid1;
 	__pid_t	pid2;
 
@@ -90,7 +91,11 @@ int	main(int ac, char **av, char **env)
 		parent_process(av, p_fd, env);
 	close (p_fd[0]);
 	close (p_fd[1]);
-	wait(NULL);
-	wait(NULL);
+	wait(&status);
+	if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
+		ft_putstr_fd("pipex: First child exited with an error\n", 2);
+	wait(&status);
+	if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
+		ft_putstr_fd("pipex: Second child exited with an error\n", 2);
 	return (0);
 }
