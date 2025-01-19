@@ -8,14 +8,24 @@ void	exec(char *cmd, char **env)
 	char	*path;
 
 	s_cmd = ft_split(cmd, ' ');
+	if(!s_cmd)
+		exit(-1);
 	path = get_path(s_cmd[0], env);
+	if (!path)
+	{
+		ft_free_tab(s_cmd);
+		exit(1);
+	}
 	if (execve(path, s_cmd, env) == -1)
 	{
-		ft_putstr_fd("pipex: command not found: ", 2);
-		ft_putendl_fd(s_cmd[0], 2);
+		perror ("pipex: command not found: ");
+		perror (s_cmd[0]);
 		ft_free_tab(s_cmd);
-		exit(0);
+		free(path); //
+		exit(-1);
 	}
+		free(path); //
+
 }
 
 void	here_doc_put_in(char **av, int *p_fd)
@@ -26,13 +36,17 @@ void	here_doc_put_in(char **av, int *p_fd)
 	while (1)
 	{
 		ret = get_next_line(0);
-		if (ft_strncmp(ret, av[2], ft_strlen(av[2])) == 0)
-		{
-			free(ret);
-			exit(0);
+		if (!ret) {
+    		ft_putstr_fd("pipex: error reading from stdin\n", 2);
+    		exit(1);
+		}
+		if (ft_strncmp(ret, av[2], ft_strlen(av[2])) == 0) {
+    		free(ret);
+    		exit(0);
 		}
 		ft_putstr_fd(ret, p_fd[1]);
 		free(ret);
+
 	}
 }
 
@@ -45,7 +59,7 @@ void	here_doc(char **av)
 		exit(0);
 	pid = fork();
 	if (pid == -1)
-		exit(0);
+		exit(1);
 	if (!pid)
 		here_doc_put_in(av, p_fd);
 	else
@@ -62,10 +76,10 @@ void	do_pipe(char *cmd, char **env)
 	int		p_fd[2];
 
 	if (pipe(p_fd) == -1)
-		exit(0);
+		exit(1);
 	pid = fork();
 	if (pid == -1)
-		exit(0);
+		exit(1);
 	if (!pid)
 	{
 		close(p_fd[0]);
@@ -102,7 +116,7 @@ int	main(int ac, char **av, char **env)
 		fd_out = open_file(av[ac - 1], 1);
 		dup2(fd_in, 0);
 	}
-	while (i <= (ac - 2))
+	while (i < (ac - 2))
 		do_pipe(av[i++], env);
 	dup2(fd_out, 1);
 	exec(av[ac - 2], env);

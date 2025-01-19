@@ -6,7 +6,7 @@
 /*   By: zmounji <zmounji@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/30 06:44:09 by zmounji           #+#    #+#             */
-/*   Updated: 2024/12/02 18:16:09 by zmounji          ###   ########.fr       */
+/*   Updated: 2025/01/19 06:47:21 by zmounji          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ char	*get_next_line(int fd)
 		if (!readed)
 			break ;
 		stash[fd] = ft_strjoin(stash[fd], readed);
+		free(stash[fd]),free(readed);
 	}
 	if (!stash[fd])
 		return (NULL);

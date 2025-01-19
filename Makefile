@@ -6,7 +6,7 @@
 #    By: zmounji <zmounji@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/01/16 18:00:00 by zmounji           #+#    #+#              #
-#    Updated: 2025/01/19 04:16:56 by zmounji          ###   ########.fr        #
+#    Updated: 2025/01/19 05:27:24 by zmounji          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ PROG_B  = pipex_bonus
 
 # Source files
 SRCS    = pipex.c utils.c
-SRCS_B  = pipex_bonus.c utils.c utils_bonus.c \
+SRCS_B  = pipex_bonus.c utils_bonus.c \
 get_next_line_utils_bonus.c get_next_line_bonus.c
 
 # Object files
